@@ -1,4 +1,5 @@
-# Importing necessary modules and packages
+# Imports
+
 import cv2
 import mediapipe as mp
 import pyautogui
@@ -10,12 +11,11 @@ from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from google.protobuf.json_format import MessageToDict
 import screen_brightness_control as sbcontrol
 
-# Setting up hand tracker
 pyautogui.FAILSAFE = False
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
-# Encoding gestures to be recognized by the tracker
+# Gesture Encodings 
 class Gest(IntEnum):
     # Binary Encoded
     """
@@ -137,7 +137,7 @@ class HandRecog:
         """
         return abs(self.hand_result.landmark[point[0]].z - self.hand_result.landmark[point[1]].z)
     
-# Function to find Gesture Encoding using current finger_state.
+    # Function to find Gesture Encoding using current finger_state.
     # Finger_state: 1 if finger is open, else 0
     def set_finger_state(self):
         """
@@ -167,8 +167,9 @@ class HandRecog:
             self.finger = self.finger << 1
             if ratio > 0.5 :
                 self.finger = self.finger | 1
+    
 
-# Handling Fluctations due to noise
+    # Handling Fluctations due to noise
     def get_gesture(self):
         """
         returns int representing gesture corresponding to Enum 'Gest'.
@@ -366,7 +367,7 @@ class Controller:
         Controller.pinchlv = 0
         Controller.prevpinchlv = 0
         Controller.framecount = 0
-    
+
     # Hold final position for 5 frames to change status
     def pinch_control(hand_result, controlHorizontal, controlVertical):
         """
@@ -466,8 +467,8 @@ class Controller:
                 Controller.pinch_control_init(hand_result)
                 Controller.pinchmajorflag = True
             Controller.pinch_control(hand_result,Controller.changesystembrightness, Controller.changesystemvolume)
-    
-    '''
+        
+'''
 ----------------------------------------  Main Class  ----------------------------------------
     Entry point of Gesture Controller
 '''
