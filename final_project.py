@@ -1,3 +1,4 @@
+
 # Importing necessary modules and packages
 import cv2
 import mediapipe as mp
@@ -321,3 +322,48 @@ class Controller:
         pyautogui.scroll(-120 if Controller.pinchlv>0.0 else 120)
         pyautogui.keyUp('ctrl')
         pyautogui.keyUp('shift')
+
+    # Locate Hand to get Cursor Position
+    # Stabilize cursor by Dampening
+    def get_position(hand_result):
+        """
+        returns coordinates of current hand position.
+
+        Locates hand to get cursor position also stabilize cursor by 
+        dampening jerky motion of hand.
+
+        Returns
+        -------
+        tuple(float, float)
+        """
+        point = 9
+        position = [hand_result.landmark[point].x ,hand_result.landmark[point].y]
+        sx,sy = pyautogui.size()
+        x_old,y_old = pyautogui.position()
+        x = int(position[0]*sx)
+        y = int(position[1]*sy)
+        if Controller.prev_hand is None:
+            Controller.prev_hand = x,y
+        delta_x = x - Controller.prev_hand[0]
+        delta_y = y - Controller.prev_hand[1]
+
+        distsq = delta_x**2 + delta_y**2
+        ratio = 1
+        Controller.prev_hand = [x,y]
+
+        if distsq <= 25:
+            ratio = 0
+        elif distsq <= 900:
+            ratio = 0.07 * (distsq ** (1/2))
+        else:
+            ratio = 2.1
+        x , y = x_old + delta_x*ratio , y_old + delta_y*ratio
+        return (x,y)
+
+    def pinch_control_init(hand_result):
+        """Initializes attributes for pinch gesture."""
+        Controller.pinchstartxcoord = hand_result.landmark[8].x
+        Controller.pinchstartycoord = hand_result.landmark[8].y
+        Controller.pinchlv = 0
+        Controller.prevpinchlv = 0
+        Controller.framecount = 0
