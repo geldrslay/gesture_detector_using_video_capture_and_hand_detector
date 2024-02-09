@@ -1,15 +1,11 @@
+# Importing necessary modules and packages
 import cv2
-from cvzone.HandTrackingModule import HandDetector
-
-#Setting up webcam for video capture
-video_capture = cv2.VideoCapture(0)
-video_capture.set(3,700)
-video_capture.set (4, 500)
-#Setting up hand detector
-hand_detector = HandDetector(detectionCon=0.8)
-while True:
-    success,img = video_capture.read()
-    img = hand_detector.findHands(img)
-    lmList, _ = hand_detector.findPosition(img)
-    cv2.imshow ("Image", img)
-    cv2.waitKey(1)
+import mediapipe as mp
+import pyautogui
+import math
+from enum import IntEnum
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from google.protobuf.json_format import MessageToDict
+import screen_brightness_control as sbcontrol
